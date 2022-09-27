@@ -1,14 +1,18 @@
 import React, { useState, useEffect } from "react";
+import { getFilesFromPath } from 'web3.storage';
 import Web3Modal from "web3modal";
 import { ethers } from "ethers";
-import { create as ipfsHttpClient } from "ipfs-http-client";
+// import { create as ipfsHttpClient } from "ipfs-http-client";
+import { Web3Storage } from 'web3.storage';
 import axios from "axios";
 import { useRouter } from "next/router";
 
 //INTERNAL IMPORT
 import { VotingAddress, VotingAddressABI } from "./constants";
+const apiToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkaWQ6ZXRocjoweGE3NjZEMTNDREQ4MzQ0YTk0NzA0MTM2QUNmMkMwZjY1QjQ0NzIyQkUiLCJpc3MiOiJ3ZWIzLXN0b3JhZ2UiLCJpYXQiOjE2NjQyOTMxNTk0NDUsIm5hbWUiOiJ2b3RpbmcifQ.SFhKQ88BoXdnZ8DNcdzi__HN59MYokoERW0wTs5mI08"
 
-const client = ipfsHttpClient("https://ipfs.infura.io:5001/api/v0");
+const client = new Web3Storage({ token: apiToken });
+// const client = ipfsHttpClient("https://ipfs.infura.io:5001/api/v0");
 
 const fetchContract = (signerOrProvider) =>
   new ethers.Contract(VotingAddress, VotingAddressABI, signerOrProvider);
@@ -64,12 +68,11 @@ export const VotingProvider = ({ children }) => {
   //UPLOAD TO IPFS Voter
   const uploadToIPFS = async (file) => {
     try {
-      const added = await client.add({ content: file });
-
-      const url = `https://ipfs.infura.io/ipfs/${added.path}`;
-
-      // setImage(url);
-      return url;
+      const added = await client.put(file);
+      const url = `https://${added}.ipfs.w3s.link/${files[0]}`;
+      console.log('stored files with cid:', cid);
+      console.log(url);
+    return url;
     } catch (error) {
       console.log("Error uploading file to IPFS");
     }
@@ -78,13 +81,14 @@ export const VotingProvider = ({ children }) => {
   //UPLOAD TO IPFS Candidate
   const uploadToIPFSCandidate = async (file) => {
     try {
-      const added = await client.add({ content: file });
-
-      const url = `https://ipfs.infura.io/ipfs/${added.path}`;
+      const cid = await client.put(file);
+      const url = `https://${cid}.ipfs.w3s.link/${file[0].name}`;
+      console.log('stored files with cid:',cid);
       console.log(url);
       return url;
     } catch (error) {
       console.log("Error uploading file to IPFS");
+      console.log(error.message)
     }
   };
   // =============================================
@@ -101,11 +105,11 @@ export const VotingProvider = ({ children }) => {
     const signer = provider.getSigner();
     const contract = fetchContract(signer);
 
-    const data = JSON.stringify({ name, address, position, image: fileUrl });
-    const added = await client.add(data);
-
-    const url = `https://ipfs.infura.io/ipfs/${added.path}`;
-
+    const data = new Blob([JSON.stringify({ name, address, position, image: fileUrl, fileID})], { type: 'application/json' });
+    const files = [new File([data], fileID)];
+    const added = await client.put(files);
+    console.log('FILE ID: ', fileID);
+    const url = `https://${added}.ipfs.w3s.link/${fileID}`;
     const voter = await contract.voterRight(address, name, url, fileUrl);
     voter.wait();
 
@@ -172,15 +176,16 @@ export const VotingProvider = ({ children }) => {
     const signer = provider.getSigner();
     const contract = fetchContract(signer);
 
-    const data = JSON.stringify({
+    const data = new Blob([JSON.stringify({
       name,
       address,
-      image: fileUrl,
-      age,
-    });
-    const added = await client.add(data);
-
-    const ipfs = `https://ipfs.infura.io/ipfs/${added.path}`;
+      image: fileUrl,fileID,
+      age
+    })],{ type: 'application/json' });
+    const files = [new File([data], fileID)];
+    const added = await client.put(files);
+    const ipfs = `https://${added}.ipfs.w3s.link/${fileID}`;
+    // const ipfs = `https://ipfs.infura.io/ipfs/${added.path}`;
 
     const candidate = await contract.setCandidate(
       address,
