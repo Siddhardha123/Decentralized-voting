@@ -1,14 +1,33 @@
+// We require the Hardhat Runtime Environment explicitly here. This is optional
+// but useful for running the script in a standalone fashion through `node <script>`.
+//
+// You can also run a script with `npx hardhat run <script>`. If you do that, Hardhat
+// will compile your contracts, add the Hardhat Runtime Environment's members to the
+// global scope, and execute the script.
 const hre = require("hardhat");
 
 async function main() {
-  const Create = await hre.ethers.getContractFactory("Create");
-  const create = await Create.deploy();
+  const [deployer] = await ethers.getSigners();
+ console.log('Deploying contracts with the account:', deployer.address);
+ console.log('Account balance:', (await deployer.getBalance()).toString());
+ const Token = await ethers.getContractFactory('Ballot');
+  const token = await Token.deploy([
+    '0x626f794100000000000000000000000000000000000000000000000000000000',
+    '0x626f794200000000000000000000000000000000000000000000000000000000',
+    '0x626f794300000000000000000000000000000000000000000000000000000000',
 
-  await create.deployed();
+  ]);
+ console.log('Token address:', token.address);
+ }
+ main()
+  .then(() => process.exit(0))
+  .catch((error) => {
+   console.error(error);
+   process.exit(1);
+  });
 
-  console.log("Lock with 1 ETH deployed to:", create.address);
-}
-
+// We recommend this pattern to be able to use async/await everywhere
+// and properly handle errors.
 main().catch((error) => {
   console.error(error);
   process.exitCode = 1;

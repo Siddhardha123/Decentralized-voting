@@ -1,15 +1,13 @@
-////////////////////////////////////////
+# Sample Hardhat Project
 
-//////////////////////////////
-const axisoData = async (url) => {
-try {
-const {
-data: { name, address, image, number, age },
-} = await axios.get(url);
+This project demonstrates a basic Hardhat use case. It comes with a sample contract, a test for that contract, and a script that deploys that contract.
 
-      console.log(url);
-    } catch (error) {
-      console.log("Someting wrong", error);
-    }
+Try running some of the following tasks:
 
-};
+```shell
+npx hardhat help
+npx hardhat test
+REPORT_GAS=true npx hardhat test
+npx hardhat node
+npx hardhat run scripts/deploy.js
+```

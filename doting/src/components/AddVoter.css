@@ -1,0 +1,8 @@
+
+
+
+.addvoterdiv{
+    width: '15em';
+    display: 'flex';
+	justify-Content: 'space-between';
+}
