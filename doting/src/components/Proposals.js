@@ -1,5 +1,5 @@
 import { parseName, parseBytes } from '../utils/decode';
-
+import { Button} from '@chakra-ui/react'
 const Proposals = ({ proposals, voteProposal }) => {
 	return (
 		<div>
@@ -10,11 +10,12 @@ const Proposals = ({ proposals, voteProposal }) => {
 				return (
 					<div key={index} style={{ padding: '1rem 0' }}>
 						🗳 {name} - {Number(voteCount)}
-						<button
+						<Button
+						    colorScheme='blue'
 							style={{ marginLeft: '2em' }}
 							onClick={() => voteProposal(index)}>
 							Vote
-						</button>
+						</Button>
 					</div>
 				);
 			})}

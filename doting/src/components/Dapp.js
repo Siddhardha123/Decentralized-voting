@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-
+import { Container,Text } from '@chakra-ui/react'
 import { ethers } from 'ethers';
 
 import CheckVoterAddress from './check-voter-address';
@@ -88,24 +88,31 @@ export const Dapp = () => {
 	};
 
 	return (
-		<div style={{ padding: '3rem 5rem' }}>
-			<h1>Voting System</h1>
+		<Container>
+			<Text>Voting System</Text>
+			<br/>
 			<div>
 				<h4>Owner: {chairperson}</h4>
 			</div>
+			<br/>
+			<br/>
 			<Proposals proposals={proposals} voteProposal={voteProposal} />
+			<br/>
+			<br/>
 			<AddVoter
 				addNewVoter={addNewVoter}
 				setNewVoter={setNewVoter}
 				newVoter={newVoter}
 				newVoterStatus={newVoterStatus}
 			/>
+			<br/>
+			<br/>
 			<CheckVoterAddress
 				voterAddressToCheck={voterAddressToCheck}
 				setVoterAddressToCheck={setVoterAddressToCheck}
 				checkAddressVoter={checkAddressVoter}
 				voterStatus={voterStatus}
 			/>
-		</div>
+		</Container>
 	);
 };

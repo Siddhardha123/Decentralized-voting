@@ -2,7 +2,10 @@
 
 
 .addvoterdiv{
-    width: '15em';
-    display: 'flex';
-	justify-Content: 'space-between';
+    display: flex;
+    justify-content: space-around;
+    
+}
+.Button{
+   margin-left: 20px;
 }
